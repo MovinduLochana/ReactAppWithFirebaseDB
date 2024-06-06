@@ -1,10 +1,4 @@
-# Getting Started with Create React App
-
-Add api keys to firebasejs file
-
-## Available Scripts
-
-In the project directory, you can run:
+# Todo App with Image upload capability
 
 ### `npm start`
 
