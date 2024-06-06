@@ -1,0 +1,90 @@
+
+import React, { useState } from "react";
+import firebase from "../firebase";
+
+export default function UploadImg() {
+
+    const [imgUrl, setImgUrl] =  useState();
+
+  const readImages = async(e) => {
+      const file = e.target.files[0];
+      const imageRef = firebase.storage().ref("images").child("imgs");
+
+      await imageRef.put(file);
+
+      imageRef.getDownloadURL().then( (url) =>{
+          setImgUrl(url);
+      } );
+      console.log(file);
+  };
+
+  return (
+    <div>
+      <h1>Uplad Image</h1>
+      <input
+        className="btn btn-primary shadow"
+        type="file"
+        accept="image/*"
+        onChange={readImages}
+      />
+      <br/>
+      <img src={imgUrl} />
+    </div>
+  );
+}
+
+---------------------------------------------------------------------------------------
+
+import React, { useEffect, useState } from "react";
+import firebase from "../firebase";
+
+export default function UploadImg() {
+  const [imgUrl, setImgUrl] = useState();
+  var idx = String(Math.floor(Math.random() * 10000 + 1));
+
+  const readImages = async (e) => {
+    const file = e.target.files[0];
+    const storageRef = firebase.storage().ref("images").child(idx);
+    const imageRef = firebase
+      .database()
+      .ref("images")
+      .child("daily")
+      .child(idx);
+
+    await storageRef.put(file);
+
+    storageRef.getDownloadURL().then((url) => {
+      //imageRef.push(url); random file name
+      imageRef.set(url); //setting file name
+      setImgUrl(url);
+    });
+    console.log(file);
+  };
+
+  const getImageUrl = () =>{
+    const imageRef = firebase.database().ref("images").child("daily");
+
+    imageRef.on("value", (snpshot) =>{
+      console.log(snpshot.val());
+    })
+  }
+
+  useEffect(() => {
+    getImageUrl();
+  }, []);
+
+  return (
+    <div>
+      <h1>Uplad Image</h1>
+      <input
+        className="btn btn-primary shadow"
+        type="file"
+        accept="image/*"
+        onChange={readImages}
+      />
+      <br />
+      <img src={imgUrl} />
+    </div>
+  );
+}
+
